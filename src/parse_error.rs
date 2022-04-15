@@ -5,5 +5,8 @@ pub enum ParseError {
     TooSmallHeader,
     UnsupportedMode,
     UnsupportedEndianness,
-    UnsupportedABI
+    UnsupportedABI,
+    UnsupportedFileType,
+    UnsupportedMachineType,
+    UnsupportedVersion
 }

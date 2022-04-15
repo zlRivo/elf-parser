@@ -150,9 +150,9 @@ pub struct SectionHeader32 {
 #[derive(Debug, Eq, PartialEq)]
 pub struct Elf32 {
     header: ElfHeader32,
-    phtable: ProgramHeader32,
-    sections: Vec<u8>,
-    shtable: SectionHeader32
+    phtable: Vec<ProgramHeader32>,
+    sections_data: Vec<u8>,
+    shtable: Vec<SectionHeader32>
 }
 
 impl Elf32 {
