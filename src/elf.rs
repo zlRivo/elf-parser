@@ -1,4 +1,7 @@
-const EI_NIDENT: usize = 16;
+pub const ELF_MAGIC_NUM: &[u8] = &[0x7F, 0x45, 0x4C, 0x46];
+pub const ELF32_HEADER_SIZE: usize = 52;
+pub const ELF64_HEADER_SIZE: usize = 64;
+pub const EI_NIDENT: usize = 16;
 
 // Custom types
 type HalfWord = u16;
@@ -8,11 +11,78 @@ type Address32 = u32;
 type Offset64 = u64;
 type Offset32 = u32;
 
+pub enum BitType {
+    _32,
+    _64
+}
+
+pub enum Endianness {
+    LittleEndian,
+    BigEndian
+}
+
+#[allow(non_camel_case_types)]
+pub enum ABI {
+    UnixSystemV,
+    HP_UX,
+    NetBSD,
+    Linux,
+    SunSolaris,
+    IBM_AIX,
+    SGI_Irix,
+    FreeBSD,
+    CompaqTRU64,
+    NovellModesto,
+    OpenBSD,
+    ARM_EABI,
+    ARM,
+    Standalone
+}
+
+#[allow(non_camel_case_types)]
+pub enum FileType {
+    ET_NONE,
+    ET_REL,
+    ET_EXEC,
+    ET_DYN,
+    ET_CORE
+}
+
+#[allow(non_camel_case_types)]
+pub enum MachineType {
+    None,
+    SPARC,
+    Intel_80386,
+    Motorola_68000,
+    Intel_i860,
+    MIPS_I,
+    Intel_i960,
+    PowerPC,
+    ARM,
+    Intel_IA64,
+    x64,
+    RISC_V
+}
+
+#[allow(non_camel_case_types)]
+pub enum HeaderVersion {
+    None,
+    Current
+}
+
+pub struct ElfIdent {
+    pub e_bits: BitType,
+    pub e_endianness: Endianness,
+    pub e_header_format_version: u8,
+    pub e_abi: ABI,
+    pub e_abi_version: u8
+}
+
 pub struct ElfHeader64 {
-    pub e_ident: [u8; EI_NIDENT],
-    pub e_type: HalfWord,
-    pub e_machine: HalfWord,
-    pub e_version: Word,
+    pub e_ident: ElfIdent,
+    pub e_type: FileType,
+    pub e_machine: MachineType,
+    pub e_version: HeaderVersion,
     pub e_entry: Address64,
     pub e_phoff: Offset64,
     pub e_shoff: Offset64,
@@ -26,10 +96,10 @@ pub struct ElfHeader64 {
 }
 
 pub struct ElfHeader32 {
-    pub e_ident: [u8; EI_NIDENT],
-    pub e_type: HalfWord,
-    pub e_machine: HalfWord,
-    pub e_version: Word,
+    pub e_ident: ElfIdent,
+    pub e_type: FileType,
+    pub e_machine: MachineType,
+    pub e_version: HeaderVersion,
     pub e_entry: Address32,
     pub e_phoff: Offset32,
     pub e_shoff: Offset32,
