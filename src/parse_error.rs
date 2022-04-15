@@ -1,3 +1,4 @@
+#[derive(Debug, Eq, PartialEq)]
 pub enum ParseError {
     NotELF,
     TooSmallIdent,

@@ -11,16 +11,19 @@ type Address32 = u32;
 type Offset64 = u64;
 type Offset32 = u32;
 
+#[derive(Debug, Eq, PartialEq)]
 pub enum BitType {
     _32,
     _64
 }
 
+#[derive(Debug, Eq, PartialEq)]
 pub enum Endianness {
     LittleEndian,
     BigEndian
 }
 
+#[derive(Debug, Eq, PartialEq)]
 #[allow(non_camel_case_types)]
 pub enum ABI {
     UnixSystemV,
@@ -39,6 +42,7 @@ pub enum ABI {
     Standalone
 }
 
+#[derive(Debug, Eq, PartialEq)]
 #[allow(non_camel_case_types)]
 pub enum FileType {
     ET_NONE,
@@ -48,6 +52,7 @@ pub enum FileType {
     ET_CORE
 }
 
+#[derive(Debug, Eq, PartialEq)]
 #[allow(non_camel_case_types)]
 pub enum MachineType {
     None,
@@ -64,12 +69,14 @@ pub enum MachineType {
     RISC_V
 }
 
+#[derive(Debug, Eq, PartialEq)]
 #[allow(non_camel_case_types)]
 pub enum HeaderVersion {
     None,
     Current
 }
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct ElfIdent {
     pub e_bits: BitType,
     pub e_endianness: Endianness,
@@ -78,6 +85,7 @@ pub struct ElfIdent {
     pub e_abi_version: u8
 }
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct ElfHeader64 {
     pub e_ident: ElfIdent,
     pub e_type: FileType,
@@ -95,6 +103,7 @@ pub struct ElfHeader64 {
     pub e_shstrndx: HalfWord
 }
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct ElfHeader32 {
     pub e_ident: ElfIdent,
     pub e_type: FileType,
@@ -112,6 +121,7 @@ pub struct ElfHeader32 {
     pub e_shstrndx: HalfWord
 }
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct ProgramHeader32 {
     pub r#type: Word,
     pub offset: Offset32,
@@ -123,6 +133,7 @@ pub struct ProgramHeader32 {
     pub align: Word
 }
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct SectionHeader32 {
     pub sh_name: Word,
     pub sh_type: Word,
@@ -136,6 +147,7 @@ pub struct SectionHeader32 {
     pub sh_entsize: Word
 }
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct Elf32 {
     header: ElfHeader32,
     phtable: ProgramHeader32,

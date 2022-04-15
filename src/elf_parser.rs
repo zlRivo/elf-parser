@@ -1,7 +1,7 @@
 use crate::elf::*;
 use crate::parse_error::ParseError;
 
-fn parse_ident(ident: &[u8]) -> Result<ElfIdent, ParseError> {
+pub fn parse_ident(ident: &[u8]) -> Result<ElfIdent, ParseError> {
     if ident.len() < EI_NIDENT { return Err(ParseError::TooSmallIdent) } // Validate size
         
     let magic = &ident[0..4]; // Get magic number
@@ -60,7 +60,31 @@ fn parse_header32(h: &[u8]) -> Result<ElfHeader32, ParseError> {
     todo!();
 }
 
-fn parse32(f: &[u8]) -> Result<Elf32, ParseError> {
+pub fn parse32(f: &[u8]) -> Result<Elf32, ParseError> {
 
     todo!();
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn parse_ident() {
+        use super::*;
+
+        let ident = &[
+            0x7F, 0x45, 0x4C, 0x46, 0x02, 0x01, 0x01, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        ];
+        
+        assert_eq!(
+            Ok(ElfIdent {
+                e_bits: BitType::_64,
+                e_endianness: Endianness::LittleEndian,
+                e_header_format_version: 1,
+                e_abi: ABI::UnixSystemV,
+                e_abi_version: 0
+            }),
+            parse_ident(ident)
+        );
+    }
 }
