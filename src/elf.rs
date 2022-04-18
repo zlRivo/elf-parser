@@ -1,3 +1,5 @@
+use crate::endianness::Endianness;
+
 pub const ELF_MAGIC_NUM: &[u8] = &[0x7F, 0x45, 0x4C, 0x46];
 pub const ELF32_HEADER_SIZE: usize = 52;
 pub const ELF64_HEADER_SIZE: usize = 64;
@@ -11,19 +13,13 @@ type Address32 = u32;
 type Offset64 = u64;
 type Offset32 = u32;
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum BitType {
     _32,
     _64
 }
 
-#[derive(Debug, Eq, PartialEq)]
-pub enum Endianness {
-    LittleEndian,
-    BigEndian
-}
-
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[allow(non_camel_case_types)]
 pub enum ABI {
     UnixSystemV,
@@ -76,7 +72,7 @@ pub enum HeaderVersion {
     Current
 }
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub struct ElfIdent {
     pub e_bits: BitType,
     pub e_endianness: Endianness,
@@ -157,13 +153,13 @@ pub struct Elf32 {
 
 impl Elf32 {
     fn new(header: ElfHeader32,
-           phtable: ProgramHeader32,
-           sections: Vec<u8>,
-           shtable: SectionHeader32) -> Self {
+           phtable: Vec<ProgramHeader32>,
+           sections_data: Vec<u8>,
+           shtable: Vec<SectionHeader32>) -> Self {
         Self {
             header,
             phtable,
-            sections,
+            sections_data,
             shtable
         }
     }
