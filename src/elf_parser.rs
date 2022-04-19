@@ -55,11 +55,11 @@ pub fn parse_ident(ident: &[u8]) -> Result<ElfIdent, ParseError> {
 }
 
 impl Elf32 {
-    fn parse_header(h: &[u8]) -> Result<ElfHeader32, ParseError> {
+    pub fn parse_header(h: &[u8]) -> Result<ElfHeader32, ParseError> {
         if h.len() < ELF32_HEADER_SIZE { return Err(ParseError::TooSmallHeader) } // Validate size
         let ident = &h[..EI_NIDENT]; // Ident part
         let ident = parse_ident(ident)?; // Parse ident
-        let endian = ident.e_endianness;
+        let endian = ident.e_endianness; // Get endian type
         
         let filetype = endianness::read16(&[h[EI_NIDENT], h[EI_NIDENT + 1]], endian);
         let filetype = match filetype {
@@ -195,5 +195,54 @@ mod tests {
             }),
             parse_ident(ident)
         );
+    }
+
+    #[test]
+    // CURRENTLY DOESNT WORK DEPENDING ON PLATFORM
+    fn parse_header32() {
+        use super::*;
+        use std::fs;
+        use std::io::prelude::*;
+        use std::process::Command;
+        use std::path::Path;
+        
+        // Create dummy file and compile it
+        // to compare header
+        if !Path::new("temp").exists() { fs::create_dir("temp").unwrap(); }
+        if let Err(_) = fs::File::open("temp/main32.c") {
+            let mut f = fs::File::create("temp/main32.c").unwrap();
+            f.write_all(b"int main(int argc, char** argv) { return 0; }").unwrap();
+        }
+        Command::new("gcc") // Compile file
+            .arg("-m32")
+            .arg("temp/main32.c")
+            .arg("-o")
+            .arg("temp/main32")
+            .output().unwrap(); 
+        // Read binary content of compiled file
+        let data = fs::read("temp/main32").unwrap();
+        // Compare headers
+        assert_eq!(Elf32::parse_header(&data).unwrap(), ElfHeader32 {
+            e_ident: ElfIdent {
+                e_bits: BitType::_32,
+                e_endianness: Endianness::LittleEndian,
+                e_header_format_version: 1,
+                e_abi: ABI::UnixSystemV,
+                e_abi_version: 0
+            },
+            e_type: FileType::ET_DYN,
+            e_machine: MachineType::Intel_80386,
+            e_version: HeaderVersion::Current,
+            e_entry: 0x1050,
+            e_phoff: 52,
+            e_shoff: 13792,
+            e_flags: 0,
+            e_ehsize: 52,
+            e_phentsize: 32,
+            e_phnum: 12,
+            e_shentsize: 40,
+            e_shnum: 30,
+            e_shstrndx: 29
+        });
     }
 }
