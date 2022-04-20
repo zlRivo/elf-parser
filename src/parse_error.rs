@@ -8,5 +8,6 @@ pub enum ParseError {
     UnsupportedABI,
     UnsupportedFileType,
     UnsupportedMachineType,
-    UnsupportedVersion
+    UnsupportedVersion,
+    UnsupportedProgramHeaderType
 }

@@ -8,6 +8,7 @@ pub const EI_NIDENT: usize = 16;
 // Custom types
 type HalfWord = u16;
 type Word = u32;
+type XWord = u64;
 type Address64 = u64;
 type Address32 = u32;
 type Offset64 = u64;
@@ -72,6 +73,25 @@ pub enum HeaderVersion {
     Current
 }
 
+#[derive(Debug, Eq, PartialEq)]
+#[allow(non_camel_case_types)]
+pub enum ProgramHeaderType {
+    PT_NULL,
+    PT_LOAD,
+    PT_DYNAMIC,
+    PT_INTERP,
+    PT_NOTE,
+    PT_SHLIB,
+    PT_PHDR,
+    PT_TLS,
+    // Linux specific
+    GNU_PROPERTY,
+    GNU_EH_FRAME,
+    GNU_STACK,
+    GNU_RELRO
+    
+}
+
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub struct ElfIdent {
     pub e_bits: BitType,
@@ -118,8 +138,20 @@ pub struct ElfHeader32 {
 }
 
 #[derive(Debug, Eq, PartialEq)]
+pub struct ProgramHeader64 {
+    pub r#type: ProgramHeaderType,
+    pub flags: Word,
+    pub offset: Offset64,
+    pub vaddr: Address64,
+    pub paddr: Address64,
+    pub filesz: XWord,
+    pub memsz: XWord,
+    pub align: XWord
+}
+
+#[derive(Debug, Eq, PartialEq)]
 pub struct ProgramHeader32 {
-    pub r#type: Word,
+    pub r#type: ProgramHeaderType,
     pub offset: Offset32,
     pub vaddr: Address32,
     pub paddr: Address32,
@@ -127,6 +159,20 @@ pub struct ProgramHeader32 {
     pub memsz: Word,
     pub flags: Word,
     pub align: Word
+}
+
+#[derive(Debug, Eq, PartialEq)]
+pub struct SectionHeader64 {
+    pub sh_name: Word,
+    pub sh_type: Word,
+    pub sh_flags: Word,
+    pub sh_addr: Address64,
+    pub sh_offset: Offset64,
+    pub sh_size: Word,
+    pub sh_link: Word,
+    pub sh_info: Word,
+    pub sh_addralign: Word,
+    pub sh_entsize: Word
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -141,6 +187,14 @@ pub struct SectionHeader32 {
     pub sh_info: Word,
     pub sh_addralign: Word,
     pub sh_entsize: Word
+}
+
+#[derive(Debug, Eq, PartialEq)]
+pub struct Elf64 {
+    header: ElfHeader64,
+    phtable: Vec<ProgramHeader64>,
+    sections_data: Vec<u8>,
+    shtable: Vec<SectionHeader64>
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -165,6 +219,26 @@ impl Elf32 {
     }
 
     fn get_entry_point(&self) -> u32 {
+        self.header.e_entry
+    }
+
+    // ...
+}
+
+impl Elf64 {
+    fn new(header: ElfHeader64,
+           phtable: Vec<ProgramHeader64>,
+           sections_data: Vec<u8>,
+           shtable: Vec<SectionHeader64>) -> Self {
+        Self {
+            header,
+            phtable,
+            sections_data,
+            shtable
+        }
+    }
+
+    fn get_entry_point(&self) -> u64 {
         self.header.e_entry
     }
 

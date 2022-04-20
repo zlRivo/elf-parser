@@ -1,25 +1,28 @@
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[allow(non_camel_case_types)]
 pub enum Endianness {
     LittleEndian,
     BigEndian
 }
 
+#[allow(non_camel_case_types)]
 pub fn read16(b: &[u8; 2], endian: Endianness) -> u16 {
     return match endian {
-        LittleEndian => (b[1] as u16) << 8 | b[0] as u16,
-        BigEndian => (b[0] as u16) << 8 | b[1] as u16
+        Endianness::LittleEndian => (b[1] as u16) << 8 | b[0] as u16,
+        Endianness::BigEndian => (b[0] as u16) << 8 | b[1] as u16
     }
 }
 
+#[allow(non_camel_case_types)]
 pub fn read32(b: &[u8; 4], endian: Endianness) -> u32 {
     return match endian {
-        LittleEndian => {
+        Endianness::LittleEndian => {
             (b[3] as u32) << 24 |
             (b[2] as u32) << 16 |
             (b[1] as u32) << 8 |
             b[0] as u32
         },
-        BigEndian => {
+        Endianness::BigEndian => {
             (b[0] as u32) << 24 |
             (b[1] as u32) << 16 |
             (b[2] as u32) << 8 |
@@ -28,9 +31,10 @@ pub fn read32(b: &[u8; 4], endian: Endianness) -> u32 {
     }
 }
 
+#[allow(non_camel_case_types)]
 pub fn read64(b: &[u8; 8], endian: Endianness) -> u64 {
     return match endian {
-        LittleEndian => {
+        Endianness::LittleEndian => {
             (b[7] as u64) << 56 |
             (b[6] as u64) << 48 |
             (b[5] as u64) << 40 |
@@ -40,7 +44,7 @@ pub fn read64(b: &[u8; 8], endian: Endianness) -> u64 {
             (b[1] as u64) << 8 |
             b[0] as u64
         },
-        BigEndian => {
+        Endianness::BigEndian => {
             (b[0] as u64) << 56 |
             (b[1] as u64) << 48 |
             (b[2] as u64) << 40 |
