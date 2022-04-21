@@ -92,6 +92,14 @@ pub enum ProgramHeaderType {
     
 }
 
+#[derive(Debug, Eq, PartialEq)]
+#[allow(non_camel_case_types)]
+pub enum ProgramHeaderFlag {
+    PF_X,
+    PF_W,
+    PF_R
+}
+
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub struct ElfIdent {
     pub e_bits: BitType,
@@ -140,7 +148,7 @@ pub struct ElfHeader32 {
 #[derive(Debug, Eq, PartialEq)]
 pub struct ProgramHeader64 {
     pub r#type: ProgramHeaderType,
-    pub flags: Word,
+    pub flags: Vec<ProgramHeaderFlag>,
     pub offset: Offset64,
     pub vaddr: Address64,
     pub paddr: Address64,
@@ -157,7 +165,7 @@ pub struct ProgramHeader32 {
     pub paddr: Address32,
     pub filesz: Word,
     pub memsz: Word,
-    pub flags: Word,
+    pub flags: Vec<ProgramHeaderFlag>,
     pub align: Word
 }
 

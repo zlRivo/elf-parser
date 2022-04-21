@@ -152,9 +152,17 @@ impl Elf64 {
                 _ => { return Err(ParseError::UnsupportedProgramHeaderType) }
             };
 
+            let mut flags: Vec<ProgramHeaderFlag> = Vec::new();
+            {
+                let num = r32();
+                if num & 1 == 1 { flags.push(ProgramHeaderFlag::PF_X); }
+                if ((num >> 1) & 1) == 1 { flags.push(ProgramHeaderFlag::PF_W); }
+                if ((num >> 2) & 1) == 1 { flags.push(ProgramHeaderFlag::PF_R); }
+            }
+
             phtable.push(ProgramHeader64 {
                 r#type: phtype,
-                flags: r32(),
+                flags,
                 offset: r64(),
                 vaddr: r64(),
                 paddr: r64(),
